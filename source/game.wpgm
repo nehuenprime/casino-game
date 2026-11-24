@@ -1,0 +1,17 @@
+import wollok.game.*
+import personaje.*
+import pantallaDeInicio.*
+import juego.*
+import obstaculos.*
+import miniJefe.*
+
+
+
+
+
+program Casino {
+
+    juego.iniciar()
+    
+}
+
