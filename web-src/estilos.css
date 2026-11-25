@@ -1,0 +1,139 @@
+:root {
+  --fondo: #082a20;
+  --fieltro: #0e3a2c;
+  --vino: #5c1220;
+  --oro: #d9a93a;
+  --marfil: #efe6d2;
+  --apagado: #a9b8a8;
+  --ancho: 832px;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--fondo);
+  color: var(--marfil);
+  font-family: "Karla", system-ui, sans-serif;
+  font-size: 1.05rem;
+  line-height: 1.55;
+}
+
+h1, h2 { font-family: "Limelight", "Georgia", serif; font-weight: 400; color: var(--oro); margin: 0; }
+h1 { font-size: clamp(2.6rem, 8vw, 4.6rem); line-height: 1; }
+h2 { font-size: 1.7rem; margin-bottom: 1rem; }
+
+.cabecera, main, .pie { width: min(100% - 32px, var(--ancho)); margin-inline: auto; }
+
+.cabecera { padding: 40px 0 24px; }
+.cabecera p { margin: 12px 0 0; max-width: 56ch; color: var(--apagado); }
+
+/* El juego es lo primero: mesa de fieltro con borde dorado */
+.mesa {
+  padding: 14px;
+  background: var(--fieltro);
+  border: 3px solid var(--oro);
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 6px var(--vino);
+}
+
+.pantalla {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+#game { width: 100%; height: 100%; }
+#game canvas {
+  display: block;
+  width: 100% !important;
+  height: auto !important;
+  image-rendering: pixelated;
+  outline: none;
+}
+
+.portada {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 24px;
+  text-align: center;
+  background: radial-gradient(circle at 50% 40%, var(--fieltro), var(--fondo) 75%);
+}
+
+.portada p { margin: 0; color: var(--apagado); max-width: 36ch; }
+
+button {
+  font: inherit;
+  cursor: pointer;
+  border: 0;
+  border-radius: 999px;
+  background: var(--oro);
+  color: #2a1c02;
+  font-weight: 700;
+  padding: 10px 22px;
+}
+button:hover:not(:disabled) { background: #e7bb52; }
+button:disabled { opacity: .6; cursor: progress; }
+button:focus-visible, kbd:focus-visible { outline: 3px solid var(--marfil); outline-offset: 3px; }
+
+#jugar { font-family: "Limelight", serif; font-size: 2rem; font-weight: 400; padding: 14px 52px; }
+
+.barra {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 12px;
+  color: var(--apagado);
+  font-size: .9rem;
+}
+.barra button { padding: 6px 16px; font-size: .9rem; background: transparent; color: var(--marfil); border: 1px solid var(--apagado); }
+.barra button:hover { background: rgba(239, 230, 210, .12); }
+
+.bloque { margin-top: 56px; }
+
+/* Controles: cada tecla se ve como tecla */
+.teclas { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.teclas li { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; }
+.grupo { display: inline-flex; gap: 4px; }
+
+kbd {
+  display: inline-block;
+  min-width: 2.2em;
+  padding: 2px 8px 4px;
+  text-align: center;
+  font: 700 .95rem/1.4 "Karla", sans-serif;
+  color: #2a1c02;
+  background: var(--marfil);
+  border-radius: 6px;
+  box-shadow: 0 3px 0 #9c9275;
+}
+
+.juegos { margin: 0; display: grid; gap: 22px; }
+.juegos > div { padding-left: 18px; border-left: 3px solid var(--oro); }
+.juegos dt { font-weight: 700; font-size: 1.15rem; }
+.juegos dd { margin: 4px 0 0; max-width: 62ch; color: var(--apagado); }
+
+.nota { margin: 28px 0 0; max-width: 62ch; }
+
+.pie { margin-top: 64px; padding: 24px 0 48px; border-top: 1px solid rgba(239, 230, 210, .2); color: var(--apagado); font-size: .95rem; }
+.pie p { margin: 0 0 4px; }
+
+/* Pantalla completa: el juego ocupa todo el alto disponible */
+.pantalla:fullscreen { display: grid; place-items: center; border-radius: 0; aspect-ratio: auto; }
+.pantalla:fullscreen #game { width: auto; height: auto; }
+.pantalla:fullscreen #game canvas { width: auto !important; height: 100vh !important; max-width: 100vw; object-fit: contain; }
+
+@media (max-width: 560px) {
+  .cabecera { padding-top: 28px; }
+  .mesa { padding: 8px; border-width: 2px; box-shadow: inset 0 0 0 4px var(--vino); }
+}

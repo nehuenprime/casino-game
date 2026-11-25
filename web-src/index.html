@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Casino · Juego en Wollok</title>
+  <meta name="description" content="Casino: un juego hecho en Wollok. Esquivá las cartas del crupier, apostá a los dados y seguí el vaso hasta juntar la meta." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Karla:wght@400;700&family=Limelight&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="estilos.css" />
+  <script src="lib/p5.min.js"></script>
+  <script src="lib/p5.sound.min.js"></script>
+  <script src="lib/game-index.js"></script>
+</head>
+<body>
+  <header class="cabecera">
+    <h1>Casino</h1>
+    <p>Robert entró al casino con $100. Para salir tiene que juntar la meta, y el crupier no se la va a dejar fácil.</p>
+  </header>
+
+  <main>
+    <section class="escenario" aria-label="Juego">
+      <div class="mesa">
+        <div class="pantalla" id="pantalla">
+          <div id="game"></div>
+          <div class="portada" id="portada">
+            <button type="button" id="jugar">Jugar</button>
+            <p id="estado">Al hacer click se activan el teclado y el sonido.</p>
+          </div>
+        </div>
+      </div>
+      <div class="barra">
+        <span>Si el navegador scrollea con las flechas, hacé click sobre el juego.</span>
+        <button type="button" id="completa">Pantalla completa</button>
+      </div>
+    </section>
+
+    <section class="bloque" aria-labelledby="t-controles">
+      <h2 id="t-controles">Controles</h2>
+      <ul class="teclas">
+        <li><span class="grupo"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span> Mover a Robert</li>
+        <li><kbd>E</kbd> Interactuar con una mesa o cancelar una apuesta</li>
+        <li><span class="grupo"><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd><kbd>4</kbd><kbd>5</kbd><kbd>6</kbd></span> Elegir monto, vaso, tipo de apuesta o número</li>
+        <li><kbd>Enter</kbd> Empezar y seguir en los menús</li>
+        <li><kbd>Espacio</kbd> Pasar la escena de la intro</li>
+        <li><kbd>H</kbd> Cambiar la dificultad en la pantalla de título</li>
+        <li><span class="grupo"><kbd>C</kbd><kbd>V</kbd></span> Ver los controles y los créditos</li>
+        <li><kbd>R</kbd> Volver a empezar después de ganar o perder</li>
+        <li><span class="grupo"><kbd>↑</kbd><kbd>↓</kbd></span> Música encendida o apagada</li>
+      </ul>
+    </section>
+
+    <section class="bloque" aria-labelledby="t-juegos">
+      <h2 id="t-juegos">Los juegos</h2>
+      <dl class="juegos">
+        <div>
+          <dt>Lluvia de cartas</dt>
+          <dd>Tocá al crupier para pelear. Esquivá las cartas que te tira: cada golpe te saca plata, y las especiales pegan más fuerte. Quedarte quieto mucho tiempo tiene castigo. Mientras sobrevivís vas sumando fichas, y las monedas que caen suman extra.</dd>
+        </div>
+        <div>
+          <dt>Dado de la suerte</dt>
+          <dd>Elegí cuánto apostar ($50, $100 o $200) y a qué: un número exacto, par, impar, mayor a 3 o menor o igual a 3. El número exacto paga mucho más que el resto.</dd>
+        </div>
+        <div>
+          <dt>Sigue el vaso</dt>
+          <dd>Mirá bajo qué vaso está el premio, seguí cómo se mezclan y elegí. Si acertás ganás lo apostado y si fallás lo perdés.</dd>
+        </div>
+      </dl>
+      <p class="nota">La meta es $1000 en Normal y $1500 en Difícil. Para enfrentar al crupier necesitás $500 en Normal o $800 en Difícil. Si te quedás en $0, perdés.</p>
+    </section>
+  </main>
+
+  <footer class="pie">
+    <p>Hecho por Nehuen Rodriguez, Facundo Velazquez y Jean-Paul Bittencourt.</p>
+    <p>Programación con Objetos I, UNAHUR (Universidad Nacional de Hurlingham).</p>
+  </footer>
+
+  <script>
+    const portada = document.getElementById('portada')
+    const estado = document.getElementById('estado')
+    const boton = document.getElementById('jugar')
+    const pantalla = document.getElementById('pantalla')
+    let iniciado = false
+
+    const activarAudio = () => { try { if (typeof userStartAudio === 'function') userStartAudio() } catch (_) {} }
+
+    async function iniciar() {
+      if (iniciado) return
+      iniciado = true
+      boton.disabled = true
+      estado.textContent = 'Cargando el juego…'
+      try {
+        const respuesta = await fetch('game.json')
+        if (!respuesta.ok) throw new Error('no se pudo leer game.json (' + respuesta.status + ')')
+        const proyecto = await respuesta.json()
+        new LocalGame(proyecto).start(document.getElementById('game'))
+        activarAudio()
+        setTimeout(activarAudio, 600)
+        portada.remove()
+      } catch (error) {
+        console.error(error)
+        iniciado = false
+        boton.disabled = false
+        estado.textContent = 'No se pudo iniciar el juego: ' + error.message + '. Probá recargar la página.'
+      }
+    }
+
+    boton.addEventListener('click', iniciar)
+
+    // Con el juego en marcha, las flechas y la barra espaciadora no tienen que mover la página.
+    document.addEventListener('keydown', (e) => {
+      if (iniciado && ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', ' '].includes(e.key)) e.preventDefault()
+    })
+
+    document.getElementById('completa').addEventListener('click', () => {
+      if (document.fullscreenElement) document.exitFullscreen()
+      else if (pantalla.requestFullscreen) pantalla.requestFullscreen()
+    })
+  </script>
+</body>
+</html>
